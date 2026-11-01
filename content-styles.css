@@ -1,34 +1,231 @@
 /* ============================================================
-   content-styles.css — SketchMind AI
-   Styles injected into host pages by the content script.
-   Prefixed with "sketchmind-" / "sm-" to avoid collisions.
+   content-styles.css — SketchMind AI  (Milestone 2)
+   Injected into host pages. Prefixed "sketchmind-" / "sm-".
    ============================================================ */
 
-/* ---------- Drawing canvas overlay ---------- */
+/* ── Canvas overlay ─────────────────────────────────────────── */
 #sketchmind-canvas {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 2147483646; /* just below browser UI max */
-  pointer-events: none;
+  /* width/height set in JS to match logical viewport */
+  z-index: 2147483640;
+  pointer-events: none;   /* safe default — JS sets 'all' when active */
   touch-action: none;
-  cursor: default;
-  /* No background — transparent by default */
+  display: block;
+  /* transparent background — page content shows through */
 }
 
-/* ---------- Explanation panel ---------- */
+/* ── Custom cursor dot ──────────────────────────────────────── */
+#sketchmind-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483646;    /* always on top */
+  display: none;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  transform-origin: center;
+  transition: width 80ms ease, height 80ms ease, border-color 80ms ease;
+  /* left/top/width/height set by JS */
+}
+
+/* ── Floating toolbar ───────────────────────────────────────── */
+#sketchmind-toolbar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);  /* starts below viewport */
+  z-index: 2147483645;
+  pointer-events: all;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+
+  background: rgba(15, 15, 25, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+
+  /* Hidden by default */
+  opacity: 0;
+  transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity   200ms ease;
+  will-change: transform, opacity;
+
+  /* Prevent toolbar from being a drawing target */
+  user-select: none;
+}
+
+#sketchmind-toolbar.sm-tb--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* sections within toolbar */
+.sm-tb-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.sm-tb-sep {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* brand label */
+.sm-tb-brand {
+  color: #6366f1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  gap: 5px;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+.sm-tb-brand svg {
+  color: #6366f1;
+}
+
+/* toolbar icon buttons */
+.sm-tb-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.60);
+  cursor: pointer;
+  transition: background 130ms ease, color 130ms ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sm-tb-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+}
+
+.sm-tb-btn.active {
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+}
+
+.sm-tb-btn:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}
+
+/* exit button — wider to fit text */
+.sm-tb-exit {
+  width: auto;
+  padding: 0 8px;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(252, 165, 165, 0.85);
+}
+
+.sm-tb-exit:hover {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+}
+
+/* color swatches */
+.sm-tb-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.sm-tb-color:hover {
+  transform: scale(1.2);
+}
+
+.sm-tb-color.active {
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.25);
+}
+
+.sm-tb-color:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* width slider */
+.sm-tb-width {
+  gap: 6px;
+  padding: 0 2px;
+}
+
+.sm-tb-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 72px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  outline: none;
+  cursor: pointer;
+}
+
+.sm-tb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #6366f1;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  cursor: grab;
+  transition: transform 120ms ease;
+}
+
+.sm-tb-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+}
+
+.sm-tb-slider:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Explanation panel ──────────────────────────────────────── */
 #sketchmind-panel {
   position: fixed;
   top: 0;
-  right: -360px; /* hidden off-screen */
+  right: -360px;
   width: 340px;
   max-width: 90vw;
   height: 100vh;
   background: #1e1e2e;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
-  z-index: 2147483645;
+  z-index: 2147483644;
   display: flex;
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -37,13 +234,13 @@
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.45);
   transition: right 260ms cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-font-smoothing: antialiased;
+  pointer-events: all;
 }
 
 #sketchmind-panel.sketchmind-panel--open {
   right: 0;
 }
 
-/* ---------- Panel header ---------- */
 .sm-panel-header {
   display: flex;
   align-items: center;
@@ -63,9 +260,7 @@
   color: #f1f5f9;
 }
 
-.sm-panel-title svg {
-  color: #6366f1;
-}
+.sm-panel-title svg { color: #6366f1; }
 
 .sm-panel-close {
   background: none;
@@ -78,13 +273,8 @@
   line-height: 1;
   transition: background 160ms ease, color 160ms ease;
 }
+.sm-panel-close:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
 
-.sm-panel-close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f1f5f9;
-}
-
-/* ---------- Panel body ---------- */
 .sm-panel-body {
   flex: 1;
   overflow-y: auto;
@@ -94,17 +284,9 @@
   gap: 14px;
 }
 
-.sm-panel-hint {
-  font-size: 13px;
-  color: #94a3b8;
-  line-height: 1.6;
-}
+.sm-panel-hint { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+.sm-panel-hint strong { color: #f1f5f9; }
 
-.sm-panel-hint strong {
-  color: #f1f5f9;
-}
-
-/* ---------- Explain button ---------- */
 .sm-btn-explain {
   display: flex;
   align-items: center;
@@ -121,19 +303,10 @@
   width: 100%;
   justify-content: center;
 }
+.sm-btn-explain:not([disabled]) { cursor: pointer; opacity: 1; }
 
-.sm-btn-explain:not([disabled]) {
-  cursor: pointer;
-  opacity: 1;
-}
+.sm-coming-soon { font-size: 11px; font-weight: 400; opacity: 0.75; }
 
-.sm-coming-soon {
-  font-size: 11px;
-  font-weight: 400;
-  opacity: 0.75;
-}
-
-/* ---------- Placeholder ---------- */
 .sm-panel-placeholder {
   display: flex;
   flex-direction: column;
@@ -148,12 +321,5 @@
   border-radius: 10px;
   min-height: 180px;
 }
-
-.sm-panel-placeholder svg {
-  color: #6366f1;
-}
-
-.sm-panel-placeholder p {
-  font-size: 12.5px;
-  line-height: 1.65;
-}
+.sm-panel-placeholder svg { color: #6366f1; }
+.sm-panel-placeholder p { font-size: 12.5px; line-height: 1.65; }
