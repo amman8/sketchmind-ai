@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SketchMind AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <!-- Header -->
+      <header class="popup-header">
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/>
+            <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor" opacity="0.6"/>
+          </svg>
+          <span class="logo-text">SketchMind <span class="logo-ai">AI</span></span>
+        </div>
+        <span class="version-badge">v0.1.0</span>
+      </header>
+
+      <!-- Status bar -->
+      <div class="status-bar" id="statusBar">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Ready</span>
+      </div>
+
+      <!-- Main actions -->
+      <main class="popup-main">
+        <section class="action-section">
+          <button class="btn btn-primary" id="toggleDrawBtn" aria-pressed="false">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/>
+              <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor" opacity="0.7"/>
+            </svg>
+            <span id="toggleDrawLabel">Enable Drawing Mode</span>
+          </button>
+
+          <button class="btn btn-secondary" id="openExplainBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Open Explanation Panel</span>
+          </button>
+        </section>
+
+        <!-- Drawing tools (shown when drawing mode is active) -->
+        <section class="tools-section hidden" id="toolsSection" aria-label="Drawing tools">
+          <p class="tools-label">Drawing Tools</p>
+          <div class="tools-row">
+            <button class="tool-btn active" id="toolPen" data-tool="pen" title="Pen">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button class="tool-btn" id="toolEraser" data-tool="eraser" title="Eraser">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20 20H7L3 16l10-10 7 7-3.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="tool-btn" id="toolHighlight" data-tool="highlight" title="Highlighter">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="3" y="13" width="18" height="5" rx="1" fill="currentColor" opacity="0.5"/>
+                <path d="M8 13V7l4-2 4 2v6" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="tool-btn" id="toolClear" data-tool="clear" title="Clear all">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="color-row" aria-label="Stroke color">
+            <button class="color-btn active" data-color="#ef4444" style="background:#ef4444" title="Red" aria-label="Red"></button>
+            <button class="color-btn" data-color="#3b82f6" style="background:#3b82f6" title="Blue" aria-label="Blue"></button>
+            <button class="color-btn" data-color="#22c55e" style="background:#22c55e" title="Green" aria-label="Green"></button>
+            <button class="color-btn" data-color="#f59e0b" style="background:#f59e0b" title="Amber" aria-label="Amber"></button>
+            <button class="color-btn" data-color="#a855f7" style="background:#a855f7" title="Purple" aria-label="Purple"></button>
+            <button class="color-btn" data-color="#1e293b" style="background:#1e293b" title="Dark" aria-label="Dark"></button>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="popup-footer">
+        <a class="footer-link" href="https://github.com/placeholder/sketchmind-ai" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <span class="footer-sep">·</span>
+        <span class="footer-note">Milestone 1 — Drawing Mode</span>
+      </footer>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
